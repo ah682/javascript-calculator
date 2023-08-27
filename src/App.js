@@ -16,55 +16,57 @@ function App() {
     };
 
     const handleOperator = (event) => {
-      const operator = event.target.textContent;
-  
-      if (lastOperationWasEqual) {
-          setDisplay(display + " " + operator + " ");
-          setLastOperationWasEqual(false);
-          return;
-      }
-  
-      if (['+', '-', '*', '/'].includes(display.slice(-2, -1))) {
-          if (operator === '-' && display.slice(-2, -1) !== '-') {
-              setDisplay(display + operator);
-          } else {
-              setDisplay(display.slice(0, -2) + " " + operator + " ");
-          }
-      } else {
-          setDisplay(display + " " + operator + " ");
-      }
-  };
+        const operator = event.target.textContent;
 
-  const sanitizeExpression = (str) => {
-    let tokens = str.split(' ');
-
-    for (let i = 0; i < tokens.length - 1; i++) {
-        // If the current token is an operator and the next one is also an operator
-        while (i < tokens.length - 1 && ['+', '-', '*', '/'].includes(tokens[i]) && ['+', '-', '*', '/'].includes(tokens[i + 1])) {
-            // If the next operator is '-', consider it as a negative sign and break out of the loop
-            if (tokens[i + 1] === '-') {
-                break;
-            }
-            // Replace the current operator with the next one and remove the next operator from the list
-            tokens[i] = tokens[i + 1];
-            tokens.splice(i + 1, 1);
+        if (lastOperationWasEqual) {
+            setDisplay(display + " " + operator + " ");
+            setLastOperationWasEqual(false);
+            return;
         }
-    }
 
-    return tokens.join(' ');
-};
+        if (['+', '-', '*', '/'].includes(display.slice(-2, -1))) {
+            if (operator === '-' && display.slice(-2, -1) !== '-') {
+                setDisplay(display + operator);
+            } else {
+                setDisplay(display.slice(0, -2) + " " + operator + " ");
+            }
+        } else {
+            setDisplay(display + " " + operator + " ");
+        }
+    };
 
-const handleEqual = () => {
-    try {
-        const sanitizedExpression = sanitizeExpression(display);
-        const result = eval(sanitizedExpression.replace(/\s+/g, ''));
-        setDisplay(parseFloat(result.toFixed(4)).toString());
-        setLastOperationWasEqual(true);
-    } catch (error) {
-        setDisplay("Error");
-    }
-};
+    const sanitizeExpression = (str) => {
+        const tokens = str.split(' ');
+        const processedTokens = [];
 
+        for (let i = 0; i < tokens.length; i++) {
+            if (['+', '-', '*', '/'].includes(tokens[i])) {
+                if (tokens[i + 1] === '-' && !['+', '-', '*', '/'].includes(tokens[i + 2])) {
+                    processedTokens.push(tokens[i]);
+                    processedTokens.push(tokens[i + 1] + tokens[i + 2]);
+                    i += 2;
+                    continue;
+                } else {
+                    processedTokens.push(tokens[i]);
+                }
+            } else {
+                processedTokens.push(tokens[i]);
+            }
+        }
+
+        return processedTokens.join(' ');
+    };
+
+    const handleEqual = () => {
+        try {
+            const sanitizedExpression = sanitizeExpression(display);
+            const result = eval(sanitizedExpression.replace(/\s+/g, ''));
+            setDisplay(parseFloat(result.toFixed(4)).toString());
+            setLastOperationWasEqual(true);
+        } catch (error) {
+            setDisplay("Error");
+        }
+    };
 
     const handleDecimal = () => {
         const array = display.split(' ');
