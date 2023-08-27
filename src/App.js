@@ -81,7 +81,7 @@ const handleEqual = () => {
 
     return (
         <div className="container">
-            <div className="title-text">Calculator App</div>
+            <div className="title-text">React Calculator</div>
             <div className="App">
                 <div className="calculator">
                     <div id="display" className="row">{display}</div>
