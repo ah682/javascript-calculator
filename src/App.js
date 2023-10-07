@@ -1,9 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import './App.css';
+import ParticleBackground from "./components/particleBackground.js";
 
 function App() {
     const [display, setDisplay] = useState('0');
+    const [fontSize, setFontSize] = useState('36'); // Initial font size
     const [lastOperationWasEqual, setLastOperationWasEqual] = useState(false);
+    const [shakeError, setShakeError] = useState(false);
+
+    useEffect(() => {
+        // Update the font size when the display changes
+        setFontSize(Math.min(36, 300 / display.length));
+    }, [display]);
 
     const handleNumber = (event) => {
         const number = event.target.textContent;
@@ -64,7 +72,9 @@ function App() {
             setDisplay(parseFloat(result.toFixed(4)).toString());
             setLastOperationWasEqual(true);
         } catch (error) {
+            setShakeError(true); // Trigger a shake when an error occurs
             setDisplay("Error");
+            setTimeout(() => setShakeError(false), 500); // Remove the shake class after 500ms
         }
     };
 
@@ -83,10 +93,13 @@ function App() {
 
     return (
         <div className="container">
+        <div className="particles-container">
+            <ParticleBackground />
+        </div>
             <div className="title-text">React Calculator</div>
             <div className="App">
                 <div className="calculator">
-                    <div id="display" className="row">{display}</div>
+                <div id="display" className={`row ${shakeError ? 'shake' : ''}`} style={{ fontSize: `${fontSize}px` }}>{display}</div>
                     <div id="clear" className="row" onClick={handleClear}>AC</div>
                     <div id="seven" onClick={handleNumber}>7</div>
                     <div id="eight" onClick={handleNumber}>8</div>
