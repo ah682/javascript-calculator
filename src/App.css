@@ -1,3 +1,9 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .App {
   display: flex;
   justify-content: center;
@@ -32,6 +38,7 @@
   white-space: nowrap;  /* Prevents text from wrapping to the next line */
   text-overflow: ellipsis;  /* Optional: displays '...' for overflowed text */
   height: 10px;
+  padding-bottom: 85px;
 }
 
 
