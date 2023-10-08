@@ -10,7 +10,7 @@ function App() {
 
   useEffect(() => {
     // Update the font size when the display changes
-    setFontSize(Math.min(36, 555 / display.length));
+    setFontSize(Math.min(36, 530 / display.length));
   }, [display]);
 
   const handleNumber = (event) => {
