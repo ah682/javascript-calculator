@@ -1,16 +1,22 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import ParticleBackground from "./components/particleBackground.js";
+import reactImage from "./react.png";
+import { AuroraHero } from "./components/AnimatedBackground.jsx";
 
 function App() {
   const [display, setDisplay] = useState("0");
   const [fontSize, setFontSize] = useState("36"); // Initial font size
   const [lastOperationWasEqual, setLastOperationWasEqual] = useState(false);
   const [shakeError, setShakeError] = useState(false);
+  const [key, setKey] = useState(0); // Added this state for handling display key updates
+  const [animate, setAnimate] = useState(false); // Define the animate state here
 
   useEffect(() => {
-    // Update the font size when the display changes
+    // Update the font size and the key for the animation when the display changes
     setFontSize(Math.min(36, 530 / display.length));
+    setKey((prevKey) => prevKey + 1); // Update key to trigger re-render of the display animation
+    // Trigger the animation only once when the component mounts
+    setAnimate(true);
   }, [display]);
 
   const handleNumber = (event) => {
@@ -21,6 +27,27 @@ function App() {
       setDisplay((prevDisplay) => prevDisplay + number);
     }
     setLastOperationWasEqual(false);
+  };
+
+  const renderDisplay = () => {
+    return (
+      <div
+        id="display"
+        className={`row ${shakeError ? "shake" : ""}`}
+        style={{
+          fontSize: `${fontSize}px`,
+          background: "#B447C3",
+          color: "#ffffff",
+        }}
+        key={key} // Use key to trigger re-render
+      >
+        {display.split("").map((char, index) => (
+          <span key={index} className="pop-animation">
+            {char}
+          </span>
+        ))}
+      </div>
+    );
   };
 
   const handleOperator = (event) => {
@@ -106,18 +133,19 @@ function App() {
   return (
     <div className="container">
       <div className="particles-container">
-        <ParticleBackground />
+        {" "}
+        <AuroraHero />
       </div>
-      <div className="title-text">React Calculator</div>
+      <div className="title-container">
+        <img
+          src={reactImage}
+          alt="React Logo"
+          className={`title-logo ${animate ? "animated" : ""}`}
+        />
+      </div>
       <div className="App">
         <div className="calculator">
-          <div
-            id="display"
-            className={`row ${shakeError ? "shake" : ""}`}
-            style={{ fontSize: `${fontSize}px` }}
-          >
-            {display}
-          </div>
+          {renderDisplay()}
           <div
             id="clear"
             className="row"
@@ -157,6 +185,7 @@ function App() {
           </div>
           <div
             id="multiply"
+            className="symbols"
             onClick={(e) => {
               handleOperator(e);
               handleAnimation(e);
@@ -193,6 +222,7 @@ function App() {
           </div>
           <div
             id="divide"
+            className="symbols"
             onClick={(e) => {
               handleOperator(e);
               handleAnimation(e);
@@ -229,6 +259,7 @@ function App() {
           </div>
           <div
             id="add"
+            className="symbols"
             onClick={(e) => {
               handleOperator(e);
               handleAnimation(e);
@@ -256,6 +287,7 @@ function App() {
           </div>
           <div
             id="equals"
+            className="equals-summary"
             onClick={(e) => {
               handleEqual(e);
               handleAnimation(e);
@@ -265,6 +297,7 @@ function App() {
           </div>
           <div
             id="subtract"
+            className="symbols"
             onClick={(e) => {
               handleOperator(e);
               handleAnimation(e);
